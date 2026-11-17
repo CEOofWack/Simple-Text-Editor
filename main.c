@@ -31,6 +31,9 @@
  * 
  * Problem: Termination at end of buffer is not ideal, add logic to handle dynamically moving the "end" in the buffer (sum like dat?).
  * Fix: End buffer with EOF, expands to -1 at compile time but I'm told it's good practice? Calloc should have taken care of any issues with garbage
+ * 
+ * Problem: Issue with print buffer when inserting newline inbetween characters
+ * Fix: clear terminal screen after before displaying buffer, should have done this before lmao
  */
 
 int num_chars = 0;
@@ -142,9 +145,10 @@ int main() {
   printf("\033[H\033[J"); //move cursor to home and clear screen
   printf("\033[?25l"); //hide cursor
   while (true) {
+    printf("\033[J"); // clear screen
     print_buffer(start_ptr, cursor);
     printf("\033[H");
-
+  
     cond = add_char(start_ptr, end_ptr, cursor);
     if (cond == 1) {
       cursor++;
@@ -177,7 +181,7 @@ int main() {
   }
 
   disable_raw_mode();
-
+  
   free(buff);
   printf("\033[H"); // send cursor home
   printf("\033[J"); // clear screen
