@@ -16,7 +16,6 @@
  * 
  * TO DO: 
  * -SEGFAULT in print_buffer when dereferncing start_ptr on linux systems, investigate!
- * -Issue with print buffer when inserting newline inbetween characters
  * -Issue with pressing ESC, look into that.
  * -Cursor underline not working for null character and ' '
  * -num_chars does not update properly since it counts overwritten characters as well
@@ -64,20 +63,19 @@ void disable_raw_mode() {
 
 // Prints the entire buffer 
 void print_buffer(char* start_ptr, char* cursor){
-    while (*start_ptr != EOF) { //SEGFAULT HERE: only on linux, mac is too lenient. Possible getting lucky
-      if (*start_ptr == ' ' || *start_ptr == '\0') {
-        printf("%c", ' ');
-        start_ptr++;
-        continue;
-      }
+    while (*start_ptr != EOF) { //SEGFAULT HERE: only on linux, mac is too lenient. Possibly getting lucky
       if (start_ptr == cursor){
-        // Not working
         if(*start_ptr == '\0' || *start_ptr == ' ' || *start_ptr == '\x1B'){
-            printf("_"); // cursor is represented by an underline for now
+            printf("█"); // cursor is represented by inverted char (same as block character here)
             start_ptr++;
             continue;
         }
-        printf("\033[4m%c\033[0m", *start_ptr);
+        printf("\033[7m%c\033[m", *start_ptr); // cursor is represented by inverted char
+        start_ptr++;
+        continue;
+      }
+      if (*start_ptr == ' ' || *start_ptr == '\0') {
+        printf("%c", ' ');
         start_ptr++;
         continue;
       }
@@ -103,21 +101,14 @@ int add_char(char * start_ptr, char * end_ptr, char * cursor) {
     getchar(); // ignore [
     c = getchar();
     switch (c) {
-    case 'A':
-      // Does nothing for now
-      return 1;
-    case 'B':
-      // Does nothing for now
-      return 1;
+    // A and B (up and down) do nothing for now
     case 'C':
-      // Moves cursor right
-      return 3;
+      return 3; // Moves cursor right
     case 'D':
-      // Moves cursor left
-      return 2;
+      return 2; // Moves cursor left
 
     default:
-      return 1;
+      return 10;
     }
   } 
   // Backspace received, delete character
@@ -135,6 +126,7 @@ int add_char(char * start_ptr, char * end_ptr, char * cursor) {
 int main() {
   int cond = 0;
   char *buff = calloc(1000, sizeof(char));
+  if (buff == NULL){printf("Error allocating buffer\n"); return -1;}
   char *start_ptr = buff;
   char *end_ptr = buff + 1000;
   *end_ptr = EOF;
@@ -142,15 +134,19 @@ int main() {
 
   raw_mode();
 
-  printf("\033[H\033[J"); //move cursor to home and clear screen
-  printf("\033[?25l"); //hide cursor
+  printf("\033[H\033[J"); // move cursor to home and clear screen
+  printf("\033[?25l"); // hide cursor
   while (true) {
     printf("\033[J"); // clear screen
     print_buffer(start_ptr, cursor);
     printf("\033[H");
-  
+
     cond = add_char(start_ptr, end_ptr, cursor);
-    if (cond == 1) {
+
+    if (cond == 10){
+      continue;
+    }
+    else if (cond == 1) {
       cursor++;
       continue;
     } 
@@ -181,7 +177,7 @@ int main() {
   }
 
   disable_raw_mode();
-  
+
   free(buff);
   printf("\033[H"); // send cursor home
   printf("\033[J"); // clear screen
