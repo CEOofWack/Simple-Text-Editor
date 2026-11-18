@@ -16,6 +16,7 @@
  * 
  * TO DO: 
  * -SEGFAULT in print_buffer when dereferncing start_ptr on linux systems, investigate!
+ * -Bus error when pressing tab continuously, investigate
  * -Issue with pressing ESC, look into that.
  * -Cursor underline not working for null character and ' '
  * -num_chars does not update properly since it counts overwritten characters as well
