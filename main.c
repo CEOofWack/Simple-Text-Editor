@@ -79,7 +79,7 @@ void print_buffer(char* start_ptr, char* cursor){
         start_ptr++;
         continue;
       }
-      printf("%c", *start_ptr); // Problem with inserting newline in between characters
+      printf("%c", *start_ptr);
       start_ptr++;
     }
 }
