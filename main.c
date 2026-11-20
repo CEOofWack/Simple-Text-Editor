@@ -14,7 +14,6 @@
  * 
  * TO DO: 
  * -STATUS UNKNOWN: SEGFAULT in print_buffer when dereferncing start_ptr on linux systems, investigate!
- * -Issue with pressing ESC, look into that.
  * -num_chars does not update properly since it counts overwritten characters as well
  * -Clean up the code
  * 
