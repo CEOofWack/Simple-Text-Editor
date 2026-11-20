@@ -62,7 +62,7 @@ void disable_raw_mode() {
 // Prints the entire buffer 
 void print_buffer(char* start_ptr, char* cursor){
     
-    while (*start_ptr != EOF) {
+    while (*start_ptr != EOF) { 
       if (start_ptr == cursor){
         if(*start_ptr == '\0' || *start_ptr == ' ' || *start_ptr == '\x1B'){
             printf("█"); // cursor is represented by inverted char
@@ -94,7 +94,7 @@ int add_char(char *start_ptr, char *end_ptr, char *cursor) {
   } 
   // ESC character received, begin check for escape sequence
   else if (z == '\x1B') {
-    // These two getchar calls move the stdin cursor past [ and the next letter, they both get ignored on the next read call run
+    // seems these two getchar calls move the stdin cursor past [ and the next letter, they both get ignored on the next read call run
     getchar(); // ignore [
     c = getchar();
     switch (c) {
@@ -132,12 +132,16 @@ int main() {
 
   raw_mode();
 
-  printf("\033[H\033[J"); // move cursor to home and clear screen
-  printf("\033[?25l"); // hide cursor
+  printf("\033[J"); // clear screen
+  printf("\033[H");
+  printf("\033[J");
+  printf("\033[7mSIMPLE TEXT EDITOR - V1                                                                                          Press '`' to exit \033[m");
+  printf("\033[3H"); // move cursor to home
+  printf("\033[?25l"); // hide terminal cursor
   while (true) {
     printf("\033[J"); // clear screen
     print_buffer(start_ptr, cursor);
-    printf("\033[H"); // send cursor home
+    printf("\033[3H"); // send cursor home
     start_ptr = buff;
     cond = add_char(start_ptr, end_ptr, cursor);
 
@@ -177,6 +181,8 @@ int main() {
   printf("\033[H"); // send cursor home
   printf("\033[J"); // clear screen
   printf("\033[?25h"); // show cursor
+
+  //printf("%d\n", num_chars);
 
   return 0;
 }
