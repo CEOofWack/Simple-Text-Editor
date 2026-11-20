@@ -15,6 +15,7 @@
  * TO DO: 
  * -STATUS UNKNOWN: SEGFAULT in print_buffer when dereferncing start_ptr on linux systems, investigate!
  * -num_chars does not update properly since it counts overwritten characters as well
+ * -add shifting buffer to make deletion more seamless
  * -Clean up the code
  * 
  * FIXED: 
