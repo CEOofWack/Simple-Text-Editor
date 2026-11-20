@@ -3,8 +3,6 @@
 #include <unistd.h>
 #include <termios.h>
 #include <stdbool.h>
-#include <ncurses.h>
-#include <string.h>
 
 /**
  * Simple Text Editor
@@ -15,7 +13,7 @@
  * Supports buffer indexing using left and right arrow-keys, deletion with the backspace key. 
  * 
  * TO DO: 
- * -SEGFAULT in print_buffer when dereferncing start_ptr on linux systems, investigate!
+ * -STATUS UNKNOWN: SEGFAULT in print_buffer when dereferncing start_ptr on linux systems, investigate!
  * -Issue with pressing ESC, look into that.
  * -num_chars does not update properly since it counts overwritten characters as well
  * -Clean up the code
@@ -44,12 +42,6 @@
 
 int num_chars = 0;
 
-// Flush input buffer. Unused for now
-void flush_input_buffer(void) {
-  int c;
-  while ((c = getchar()) != '\n' && c != EOF);
-}
-
 // Function that enables "raw mode" by configuring the terminal enviroment using functions from the terimios.h header file
 void raw_mode() {
   struct termios current_mode;
@@ -71,7 +63,7 @@ void disable_raw_mode() {
 // Prints the entire buffer 
 void print_buffer(char* start_ptr, char* cursor){
     
-    while (*start_ptr != EOF) { //SEGFAULT HERE: only on linux, mac is too lenient. Possibly getting lucky
+    while (*start_ptr != EOF) {
       if (start_ptr == cursor){
         if(*start_ptr == '\0' || *start_ptr == ' ' || *start_ptr == '\x1B'){
             printf("█"); // cursor is represented by inverted char
