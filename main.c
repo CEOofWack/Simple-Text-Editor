@@ -133,15 +133,15 @@ int main() {
   raw_mode();
 
   printf("\033[J"); // clear screen
-  printf("\033[H");
-  printf("\033[J");
-  printf("\033[7mSIMPLE TEXT EDITOR - V1                                                                                          Press '`' to exit \033[m");
-  printf("\033[3H"); // move cursor to home
+  printf("\033[H"); // send cursor top left (terminal home)
+  printf("\033[J"); // clear screen
+  printf("\033[7mSIMPLE TEXT EDITOR - V1                                                                                                     Press '`' to exit \033[m");
+  printf("\033[3H"); // send cursor to program output home (Starts 3rd row)
   printf("\033[?25l"); // hide terminal cursor
   while (true) {
     printf("\033[J"); // clear screen
     print_buffer(start_ptr, cursor);
-    printf("\033[3H"); // send cursor home
+    printf("\033[3H"); // send cursor to program output home (Starts 3rd row)
     start_ptr = buff;
     cond = add_char(start_ptr, end_ptr, cursor);
 
