@@ -94,7 +94,7 @@ int add_char(char *start_ptr, char *end_ptr, char *cursor) {
   } 
   // ESC character received, begin check for escape sequence
   else if (z == '\x1B') {
-    // seems these two getchar calls move the stdin cursor past [ and the next letter, they both get ignored on the next read call run
+    // These two getchar calls move the stdin cursor past [ and the next letter, they both get ignored on the next read call run
     getchar(); // ignore [
     c = getchar();
     switch (c) {
