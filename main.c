@@ -152,7 +152,7 @@ int main() {
   printf("\033[J"); // clear screen
   printf("\033[H"); // send cursor top left (terminal home)
   printf("\033[J"); // clear screen
-  printf("\033[7mSIMPLE TEXT EDITOR - V1                                                                                                                              Press '`' to exit \033[m");
+  printf("\033[7mSIMPLE TEXT EDITOR - V1 - This border does not resize according to terminal width just yet                                                                                                                              Press '`' to exit \033[m");
   printf("\033[3H"); // send cursor to program output home (Starts 3rd row)
   printf("\033[?25l"); // hide terminal cursor
   while (true) {
