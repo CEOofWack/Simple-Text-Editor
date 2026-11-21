@@ -10,12 +10,13 @@
  * (Currently) a half functional text editor.
  * Manual character changing (for now), and no concept of lines of text (for now)
  * 
- * Supports buffer indexing using left and right arrow-keys, deletion with the backspace key. 
+ * Supports buffer indexing using left and right arrow-keys, deletion in place with the backspace key. 
  * 
- * TO DO: 
+ * TODO: 
  * -STATUS UNKNOWN: SEGFAULT in print_buffer when dereferncing start_ptr on linux systems, investigate!
  * -num_chars does not update properly since it counts overwritten characters as well
- * -add shifting buffer to make deletion more seamless
+ * -PARTIALLY DONE: add shifting buffer to make deletion more seemless
+ * -add logic for tab characters so they appear as multiple spaces and improve insertion between chars
  * -Clean up the code
  * 
  * FIXED: 
@@ -60,12 +61,26 @@ void disable_raw_mode() {
   tcsetattr(STDIN_FILENO, TCSAFLUSH, &current_mode);
 }
 
+// Shifts buffer after backspace pressed. 
+void shift_buffer(char* cursor){
+  char* temp = cursor;
+  while (true){
+    if(*(temp + 1) == EOF){
+      *temp = '\0';
+      return;
+    }
+    *(temp) = *(temp + 1);
+    temp++;
+  }
+
+}
+
 // Prints the entire buffer 
 void print_buffer(char* start_ptr, char* cursor){
     
     while (*start_ptr != EOF) { 
       if (start_ptr == cursor){
-        if(*start_ptr == '\0' || *start_ptr == ' ' || *start_ptr == '\x1B'){
+        if(*start_ptr == '\0' || *start_ptr == ' ' || *start_ptr == '\x1B' || *start_ptr == '\n'){
             printf("█"); // cursor is represented by inverted char
             start_ptr++;
             continue;
@@ -83,6 +98,7 @@ void print_buffer(char* start_ptr, char* cursor){
       start_ptr++;
     }
 }
+
 
 // Function that handles user input and buffer writing
 int add_char(char *start_ptr, char *end_ptr, char *cursor) {
@@ -136,7 +152,7 @@ int main() {
   printf("\033[J"); // clear screen
   printf("\033[H"); // send cursor top left (terminal home)
   printf("\033[J"); // clear screen
-  printf("\033[7mSIMPLE TEXT EDITOR - V1                                                                                                     Press '`' to exit \033[m");
+  printf("\033[7mSIMPLE TEXT EDITOR - V1                                                                                                                              Press '`' to exit \033[m");
   printf("\033[3H"); // send cursor to program output home (Starts 3rd row)
   printf("\033[?25l"); // hide terminal cursor
   while (true) {
@@ -169,6 +185,12 @@ int main() {
     } 
     else if (cond == 4) {
         *cursor = '\0';
+        shift_buffer(cursor);
+        if (cursor == start_ptr) {
+          num_chars--;
+          continue;
+        }
+        cursor--;
         num_chars--;
     }
     else {
