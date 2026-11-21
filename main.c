@@ -80,7 +80,7 @@ void print_buffer(char* start_ptr, char* cursor){
     
     while (*start_ptr != EOF) { 
       if (start_ptr == cursor){
-        if(*start_ptr == '\0' || *start_ptr == ' ' || *start_ptr == '\x1B' || *start_ptr == '\n'){
+        if(*start_ptr == '\0' || *start_ptr == ' ' || *start_ptr == '\x1B'){
             printf("█"); // cursor is represented by inverted char
             start_ptr++;
             continue;
